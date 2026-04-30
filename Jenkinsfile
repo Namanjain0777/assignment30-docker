@@ -17,7 +17,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo '🔨 Building Docker images...'
-                sh 'docker-compose -f ${COMPOSE_FILE} build --no-cache'
+                sh 'docker compose -f ${COMPOSE_FILE} build --no-cache'
             }
         }
 
@@ -25,10 +25,10 @@ pipeline {
             steps {
                 echo '🧪 Running basic health check on backend...'
                 sh '''
-                    docker-compose -f ${COMPOSE_FILE} up -d mongo backend
+                    docker compose -f ${COMPOSE_FILE} up -d mongo backend
                     sleep 10
-                    docker-compose -f ${COMPOSE_FILE} exec -T backend node -e "console.log('Backend OK')"
-                    docker-compose -f ${COMPOSE_FILE} stop mongo backend
+                    docker compose -f ${COMPOSE_FILE} exec -T backend node -e "console.log('Backend OK')"
+                    docker compose -f ${COMPOSE_FILE} stop mongo backend
                 '''
             }
         }
@@ -36,7 +36,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo '🚀 Deploying all services...'
-                sh 'docker-compose -f ${COMPOSE_FILE} up -d'
+                sh 'docker compose -f ${COMPOSE_FILE} up -d'
                 echo '✅ All services are up!'
             }
         }
@@ -48,7 +48,7 @@ pipeline {
         }
         failure {
             echo '❌ Pipeline failed. Tearing down containers...'
-            sh 'docker-compose -f ${COMPOSE_FILE} down || true'
+            sh 'docker compose -f ${COMPOSE_FILE} down || true'
         }
     }
 }
