@@ -8,7 +8,16 @@ RUN apt-get update && \
     curl -fsSL https://get.docker.com | sh && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Allow jenkins user to run docker without sudo
+# Allow jenkins user to run docker
 RUN usermod -aG docker jenkins
 
 USER jenkins
+
+# Pre-install essential plugins (Pipeline + Git + recommended basics)
+RUN jenkins-plugin-cli --plugins \
+    pipeline-model-definition \
+    git \
+    workflow-aggregator \
+    credentials-binding \
+    timestamper \
+    ws-cleanup
